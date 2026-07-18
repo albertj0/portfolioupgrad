@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applications — Albert Jose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="trace-spine" aria-hidden="true"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="part-code mono" href="index.html">AJ‑2027xx <span>| ECE ENGINEERING SAMPLE</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="features.html">Features</a>
+      <a href="applications.html" class="active">Applications</a>
+      <a href="pmvikas.html">PM‑VIKAS</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="ordering.html">Order</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <div class="page-header">
+    <a href="index.html" class="back-link mono">← Home</a>
+    <p class="eyebrow">§3 · Typical Application Circuits</p>
+    <h2 class="sec-title" style="margin-bottom:0;">Applications</h2>
+  </div>
+
+  <section id="applications" style="padding-top:24px;">
+    <div class="scene-panel" id="modulesPanel">
+      <div class="scene-canvas-wrap">
+        <canvas id="modulesCanvas" role="img" aria-label="3D animation of three modules representing the gesture recognition, weather monitoring, and maze robot projects"></canvas>
+      </div>
+      <div class="scene-legend">
+        <span><i style="background:#c08a28"></i>Gesture Recognition</span>
+        <span><i style="background:#56d6c9"></i>Weather Monitoring</span>
+        <span><i style="background:#b09bea"></i>Maze Robot</span>
+      </div>
+      <div class="scene-hint">drag to rotate · tap a card below for details</div>
+      <div class="scene-fallback">
+        <p class="desc-text">Three modules — one per project — see the details below.</p>
+      </div>
+    </div>
+
+    <div class="app-card" id="app-gesture">
+      <div class="app-head">
+        <h3>Wireless Gesture Recognition System</h3>
+        <span class="app-year mono">2026</span>
+      </div>
+      <ul>
+        <li>Built a wireless gesture control system using an MPU6050 accelerometer/gyroscope interfaced over I2C with an ESP8266 microcontroller for real-time motion capture.</li>
+        <li>Engineered wireless data transmission from the ESP8266 to a Raspberry Pi 4 to process real-time motion data.</li>
+        <li>Designed system block diagrams and control logic to map hand gestures to LED state changes.</li>
+      </ul>
+      <div class="app-tags">
+        <span class="tag">MPU6050</span><span class="tag">I2C</span><span class="tag">ESP8266</span><span class="tag">Raspberry Pi 4</span>
+      </div>
+    </div>
+
+    <div class="app-card" id="app-weather">
+      <div class="app-head">
+        <h3>IoT-Based Weather Monitoring System</h3>
+        <span class="app-year mono">2025</span>
+      </div>
+      <ul>
+        <li>Integrated Arduino Uno with DHT11 and BMP180 sensors over I2C/digital protocols, with live readings on a JHD162A 16×2 LCD.</li>
+        <li>Engineered UART-based serial communication between Arduino and an ESP8266 Wi-Fi module to transmit readings to a remote server.</li>
+        <li>Implemented temperature, humidity, and pressure sensing with robust Embedded C logging routines.</li>
+      </ul>
+      <div class="app-tags">
+        <span class="tag">Arduino Uno</span><span class="tag">DHT11</span><span class="tag">BMP180</span><span class="tag">UART</span>
+      </div>
+    </div>
+
+    <div class="app-card" id="app-maze">
+      <div class="app-head">
+        <h3>Maze-Solving Robot</h3>
+        <span class="app-year mono">2024</span>
+      </div>
+      <ul>
+        <li>Designed an autonomous maze-solving robot using Arduino Uno, three HC-SR04 ultrasonic sensors, and an L293D dual H-bridge motor driver.</li>
+        <li>Implemented real-time obstacle avoidance and directional logic from ultrasonic feedback.</li>
+        <li>Programmed sensor polling and motor control in Embedded C/C++, iterating on navigation accuracy.</li>
+      </ul>
+      <div class="app-tags">
+        <span class="tag">Arduino Uno</span><span class="tag">HC‑SR04</span><span class="tag">L293D</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="mono">
+  REV 3.0 — MULTI-PAGE 3D RELEASE — JUL 2026 &nbsp;·&nbsp; ALBERT JOSE / CHRIST COLLEGE OF ENGINEERING
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="features.html">Features</a>
+    <a href="pmvikas.html">PM‑VIKAS</a>
+    <a href="ratings.html">Ratings</a>
+    <a href="ordering.html">Order</a>
+  </nav>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var canvas = document.getElementById('modulesCanvas');
+  if(!canvas) return;
+
+  var gestureCube, weatherDiscs = [], mazeMarker, mazeT = 0;
+
+  initScenePanel('modulesPanel', 'modulesCanvas', {
+    camY: 1.6, camZ: 8.5, fov: 38, autoRotateSpeed: 0.1,
+    build: function(scene, group, THREE){
+      var baseMat = new THREE.MeshStandardMaterial({ color:0x0e3a2c, roughness:0.75, metalness:0.05 });
+      var base = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.15, 2.6), baseMat);
+      base.position.y = -1.1;
+      group.add(base);
+
+      /* module 1: gesture recognition — cube with axis gizmo */
+      var gMat = new THREE.MeshStandardMaterial({ color:0xc08a28, roughness:0.3, metalness:0.6, emissive:0xc08a28, emissiveIntensity:0.15 });
+      gestureCube = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.9), gMat);
+      gestureCube.position.set(-2.8, -0.4, 0);
+      group.add(gestureCube);
+      var axisColors = [0xff6b6b, 0x6bff9e, 0x6ba8ff];
+      [[1,0,0],[0,1,0],[0,0,1]].forEach(function(dir, i){
+        var lineMat = new THREE.LineBasicMaterial({ color:axisColors[i] });
+        var pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(dir[0]*0.9, dir[1]*0.9, dir[2]*0.9)];
+        var lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
+        var line = new THREE.Line(lineGeo, lineMat);
+        gestureCube.add(line);
+      });
+
+      /* module 2: weather monitoring — stacked translucent discs */
+      var discColors = [0x56d6c9, 0x56d6c9, 0x56d6c9];
+      for(var d=0; d<3; d++){
+        var discMat = new THREE.MeshStandardMaterial({ color:0x56d6c9, roughness:0.25, metalness:0.2, transparent:true, opacity:0.55 - d*0.1, emissive:0x56d6c9, emissiveIntensity:0.1 });
+        var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.55 - d*0.08, 0.55 - d*0.08, 0.08, 24), discMat);
+        disc.position.set(0, -0.9 + d*0.28, 0);
+        group.add(disc);
+        weatherDiscs.push(disc);
+      }
+
+      /* module 3: maze robot — grid floor + moving marker */
+      var gridHelper = new THREE.GridHelper(1.6, 6, 0xb09bea, 0xb09bea);
+      gridHelper.position.set(2.8, -0.95, 0);
+      gridHelper.material.transparent = true;
+      gridHelper.material.opacity = 0.5;
+      group.add(gridHelper);
+
+      var markerMat = new THREE.MeshStandardMaterial({ color:0xb09bea, roughness:0.3, metalness:0.5, emissive:0xb09bea, emissiveIntensity:0.4 });
+      mazeMarker = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.22,0.22), markerMat);
+      mazeMarker.position.set(2.8, -0.75, 0);
+      group.add(mazeMarker);
+
+      /* click a third of the canvas to jump to that project's card */
+      canvas.addEventListener('click', function(e){
+        var rect = canvas.getBoundingClientRect();
+        var xFrac = (e.clientX - rect.left) / rect.width;
+        var targetId = xFrac < 0.34 ? 'app-gesture' : xFrac < 0.67 ? 'app-weather' : 'app-maze';
+        var target = document.getElementById(targetId);
+        if(target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    },
+    onFrame: function(dt){
+      if(gestureCube){ gestureCube.rotation.x += dt*0.6; gestureCube.rotation.y += dt*0.4; }
+      weatherDiscs.forEach(function(disc, i){ disc.rotation.y += dt * (0.3 + i*0.15); });
+      if(mazeMarker){
+        mazeT += dt;
+        var path = [[-0.5,-0.5],[0.5,-0.5],[0.5,0.1],[-0.1,0.1],[-0.1,0.5],[0.5,0.5]];
+        var segT = (mazeT * 0.5) % path.length;
+        var i0 = Math.floor(segT) % path.length;
+        var i1 = (i0+1) % path.length;
+        var f = segT - Math.floor(segT);
+        var x = path[i0][0] + (path[i1][0]-path[i0][0]) * f;
+        var z = path[i0][1] + (path[i1][1]-path[i0][1]) * f;
+        mazeMarker.position.set(2.8 + x, -0.75, z);
+      }
+    }
+  });
+
+  ['app-gesture','app-weather','app-maze'].forEach(function(id){
+    var card = document.getElementById(id);
+    if(card) card.style.scrollMarginTop = '100px';
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM-VIKAS — Albert Jose</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="trace-spine" aria-hidden="true"></div>
+
+<header>
+  <div class="header-inner">
+    <a class="part-code mono" href="index.html">AJ‑2027xx <span>| ECE ENGINEERING SAMPLE</span></a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="features.html">Features</a>
+      <a href="applications.html">Applications</a>
+      <a href="pmvikas.html" class="active">PM‑VIKAS</a>
+      <a href="ratings.html">Ratings</a>
+      <a href="ordering.html">Order</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <div class="page-header">
+    <a href="index.html" class="back-link mono">← Home</a>
+    <p class="eyebrow">§4 · Field Test Log</p>
+    <h2 class="sec-title" style="margin-bottom:0;">PM‑VIKAS IoT Internship</h2>
+  </div>
+
+  <section id="pmvikas" style="padding-top:24px;">
+    <div class="scope-frame">
+      <p>
+        <strong>PM‑VIKAS</strong> (Pradhan Mantri Virasat Ka Samvardhan) is a flagship
+        Govt. of India skill-development scheme run by the Ministry of Minority Affairs.
+        Albert was selected as <strong>one of 150 participants nationwide</strong> for its
+        IoT training track, hosted at <strong>IIIT Kottayam</strong> — the first higher
+        education institution in India to implement the scheme. Ten days, three phases,
+        one continuous build-up from first principles to a working cloud-connected system.
+      </p>
+    </div>
+
+    <div class="scene-panel" id="barsPanel">
+      <div class="scene-canvas-wrap" style="height:min(38vh,320px);">
+        <canvas id="barsCanvas" role="img" aria-label="3D animation of ten bars rising, one per training day, colored by phase"></canvas>
+      </div>
+      <div class="scene-legend">
+        <span><i style="background:#eab454"></i>CH1 — Foundations</span>
+        <span><i style="background:#56d6c9"></i>CH2 — Sensors &amp; Wireless</span>
+        <span><i style="background:#b09bea"></i>CH3 — Cloud &amp; Capstone</span>
+      </div>
+      <div class="scene-hint">drag to rotate · each bar is one training day</div>
+      <div class="scene-fallback">
+        <p class="desc-text">Ten training days across three phases — full log below.</p>
+      </div>
+    </div>
+
+    <div class="log-toggle-all">
+      <button type="button" id="logToggleAll">Expand all</button>
+    </div>
+
+    <div class="phase-heading">
+      <span class="dot" style="background:var(--ch1)"></span>
+      <h3>Phase 1 · Foundations</h3>
+      <span class="range mono">Week 1</span>
+    </div>
+    <div class="log-timeline" style="--rail:var(--ch1)">
+      <div class="log-entry" style="--dot:var(--ch1)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D01</span>
+          <span class="day-title">Introduction to IoT &amp; Ecosystem</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Inauguration of the PM‑VIKAS IoT training program. Introduced to IoT nodes,
+          device-to-cloud architectures, real-world smart systems (cities, grid networks),
+          and communication layers.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch1)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D02</span>
+          <span class="day-title">Microcontroller Architectures &amp; IDE</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Studied Arduino Uno and ESP32 board layouts. Installed the Arduino IDE, configured
+          port selections, wrote basic C script routines, and flashed standard status-LED
+          programs.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch1)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D03</span>
+          <span class="day-title">Basic Electronic Components</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Detailed analysis of resistors, capacitors, and LEDs. Hands-on breadboard wiring
+          and simple circuit design rules.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch1)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D04</span>
+          <span class="day-title">Hardware Measurement &amp; GPIOs</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Configured and tested digital/analog GPIO pins. Measured voltage, loop currents,
+          and resistance across wired test circuits with a digital multimeter.
+        </div></div>
+      </div>
+    </div>
+
+    <div class="phase-heading">
+      <span class="dot" style="background:var(--ch2)"></span>
+      <h3>Phase 2 · Sensors &amp; Wireless</h3>
+      <span class="range mono">Week 2</span>
+    </div>
+    <div class="log-timeline" style="--rail:var(--ch2)">
+      <div class="log-entry" style="--dot:var(--ch2)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D05</span>
+          <span class="day-title">Interfacing LDR (Light Sensors)</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Interfaced light-dependent resistors to read changing analog light-intensity
+          levels, and programmed thresholds to trigger output alerts on ambient
+          illumination changes.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch2)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D06</span>
+          <span class="day-title">Interfacing DHT11 Temperature Sensor</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Interfaced a DHT11 sensor to monitor temperature and humidity, writing data
+          validation logic to filter noise and format values for transmission.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch2)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D07</span>
+          <span class="day-title">Wi‑Fi &amp; Network Protocols</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Set up a microcontroller's Wi‑Fi module, established station (STA) connections
+          to local networks, and checked communication protocols — IP addressing, TCP
+          client/server models.
+        </div></div>
+      </div>
+    </div>
+
+    <div class="phase-heading">
+      <span class="dot" style="background:var(--ch3)"></span>
+      <h3>Phase 3 · Cloud &amp; Capstone</h3>
+      <span class="range mono">Week 3</span>
+    </div>
+    <div class="log-timeline" style="--rail:var(--ch3)">
+      <div class="log-entry" style="--dot:var(--ch3)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D08</span>
+          <span class="day-title">Blynk IoT Cloud Setup &amp; Auth</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Created a developer account on Blynk IoT Cloud, set up device templates and
+          virtual datastreams, generated authentication tokens, and configured a mobile
+          dashboard.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch3)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D09</span>
+          <span class="day-title">Real-time Cloud Telemetry</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Programmed the microcontroller to upload live environmental readings (light
+          intensity, temperature/humidity) to the cloud dashboard, verifying low-latency
+          response and remote app widgets.
+        </div></div>
+      </div>
+      <div class="log-entry" style="--dot:var(--ch3)">
+        <button class="log-btn" aria-expanded="false">
+          <span class="day-code">D10</span>
+          <span class="day-title">Cloud Logger &amp; Capstone</span>
+          <span class="chevron">›</span>
+        </button>
+        <div class="log-body"><div class="log-body-inner">
+          Linked the device to a cloud logging service for long-term data visualisation,
+          and assembled the capstone: an integrated smart-monitoring system tracking
+          sensors and controlling output relays.
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="mono">
+  REV 3.0 — MULTI-PAGE 3D RELEASE — JUL 2026 &nbsp;·&nbsp; ALBERT JOSE / CHRIST COLLEGE OF ENGINEERING
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="features.html">Features</a>
+    <a href="applications.html">Applications</a>
+    <a href="ratings.html">Ratings</a>
+    <a href="ordering.html">Order</a>
+  </nav>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="common.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+  var canvas = document.getElementById('barsCanvas');
+  if(!canvas) return;
+
+  var bars = [];
+  var heights = [0.6,0.8,0.7,1.0, 1.1,1.3,1.2, 1.5,1.7,1.9];
+  var colors  = [0xeab454,0xeab454,0xeab454,0xeab454, 0x56d6c9,0x56d6c9,0x56d6c9, 0xb09bea,0xb09bea,0xb09bea];
+
+  initScenePanel('barsPanel', 'barsCanvas', {
+    camY: 1.3, camZ: 7.5, fov: 36, autoRotateSpeed: 0.1,
+    build: function(scene, group, THREE){
+      var baseMat = new THREE.MeshStandardMaterial({ color:0x0e3a2c, roughness:0.75, metalness:0.05 });
+      var base = new THREE.Mesh(new THREE.BoxGeometry(9.5, 0.12, 1.4), baseMat);
+      base.position.y = -1.0;
+      group.add(base);
+
+      for(var i=0;i<10;i++){
+        var mat = new THREE.MeshStandardMaterial({ color:colors[i], roughness:0.3, metalness:0.5, emissive:colors[i], emissiveIntensity:0.25 });
+        var bar = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1, 0.55), mat);
+        var x = -4.25 + i * 0.95;
+        bar.position.set(x, -1.0, 0);
+        bar.scale.y = 0.001;
+        bar.userData.targetH = heights[i];
+        bar.userData.grown = false;
+        group.add(bar);
+        bars.push(bar);
+      }
+    },
+    onFrame: function(dt){
+      bars.forEach(function(bar, i){
+        var target = bar.userData.targetH;
+        var current = bar.scale.y;
+        if(window.prefersReducedMotion){
+          bar.scale.y = target;
+          bar.position.y = -1.0 + (target/2);
+        } else if(current < target){
+          var next = Math.min(target, current + dt * (0.9 + i*0.05));
+          bar.scale.y = next;
+          bar.position.y = -1.0 + (next/2);
+        }
+      });
+    }
+  });
+});
+</script>
+</body>
+</html>
