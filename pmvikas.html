@@ -61,7 +61,49 @@
         <p class="desc-text">Ten training days across three phases — full log below.</p>
       </div>
     </div>
+<!-- DATASHEET ACTIVITY CALENDAR -->
+    <div class="calendar-wrapper" style="margin-bottom: 40px; padding: 24px; background: rgba(21,79,60,0.35); border: 1px solid rgba(192,138,40,0.3); border-radius: var(--radius);">
+      <p class="eyebrow" style="text-align: left; margin-bottom: 16px;">Training Matrix · June 2026</p>
+      <div class="calendar-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+        
+        <!-- Phase 1: Foundations -->
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch1); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch1); font-size: 0.75rem;">DAY 01</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch1); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch1); font-size: 0.75rem;">DAY 02</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch1); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch1); font-size: 0.75rem;">DAY 03</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch1); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch1); font-size: 0.75rem;">DAY 04</span>
+        </div>
 
+        <!-- Phase 2: Sensors & Wireless -->
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch2); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch2); font-size: 0.75rem;">DAY 05</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch2); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch2); font-size: 0.75rem;">DAY 06</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch2); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch2); font-size: 0.75rem;">DAY 07</span>
+        </div>
+
+        <!-- Phase 3: Cloud & Capstone -->
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch3); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch3); font-size: 0.75rem;">DAY 08</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch3); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch3); font-size: 0.75rem;">DAY 09</span>
+        </div>
+        <div class="cal-day" style="background: var(--pcb-green-deep); border: 1px solid var(--ch3); border-radius: 4px; padding: 12px; text-align: center; cursor: pointer;">
+          <span class="mono" style="color: var(--ch3); font-size: 0.75rem;">DAY 10</span>
+        </div>
+        
+      </div>
+    </div>
     <div class="log-toggle-all">
       <button type="button" id="logToggleAll">Expand all</button>
     </div>
@@ -223,6 +265,8 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
 <script src="common.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
