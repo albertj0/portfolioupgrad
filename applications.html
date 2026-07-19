@@ -112,59 +112,68 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
 <script src="common.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function(){
   var canvas = document.getElementById('modulesCanvas');
   if(!canvas) return;
 
-  var gestureCube, weatherDiscs = [], mazeMarker, mazeT = 0;
+  // Variables to hold the loaded models for animation
+  var gestureModel, weatherModel, mazeModel, mazeT = 0;
 
   initScenePanel('modulesPanel', 'modulesCanvas', {
     camY: 1.6, camZ: 8.5, fov: 38, autoRotateSpeed: 0.1,
+    
+    // 1. Add your HDRI environment map for photorealistic metallic reflections
+    envMapUrl: 'assets/studio_lighting.hdr', 
+    
     build: function(scene, group, THREE){
+      // Base Platform
       var baseMat = new THREE.MeshStandardMaterial({ color:0x0e3a2c, roughness:0.75, metalness:0.05 });
       var base = new THREE.Mesh(new THREE.BoxGeometry(8.4, 0.15, 2.6), baseMat);
       base.position.y = -1.1;
       group.add(base);
 
-      /* module 1: gesture recognition — cube with axis gizmo */
-      var gMat = new THREE.MeshStandardMaterial({ color:0xc08a28, roughness:0.3, metalness:0.6, emissive:0xc08a28, emissiveIntensity:0.15 });
-      gestureCube = new THREE.Mesh(new THREE.BoxGeometry(0.9,0.9,0.9), gMat);
-      gestureCube.position.set(-2.8, -0.4, 0);
-      group.add(gestureCube);
-      var axisColors = [0xff6b6b, 0x6bff9e, 0x6ba8ff];
-      [[1,0,0],[0,1,0],[0,0,1]].forEach(function(dir, i){
-        var lineMat = new THREE.LineBasicMaterial({ color:axisColors[i] });
-        var pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(dir[0]*0.9, dir[1]*0.9, dir[2]*0.9)];
-        var lineGeo = new THREE.BufferGeometry().setFromPoints(pts);
-        var line = new THREE.Line(lineGeo, lineMat);
-        gestureCube.add(line);
+      var loader = new THREE.GLTFLoader();
+
+      // Module 1: Gesture Recognition
+      // Replace 'assets/esp8266_rpi4.glb' with the path to your downloaded model
+      loader.load('assets/esp8266_rpi4.glb', function(gltf) {
+        gestureModel = gltf.scene;
+        gestureModel.position.set(-2.8, -0.4, 0);
+        
+        // Scale the model down if it imports too large
+        // gestureModel.scale.setScalar(0.5); 
+        
+        group.add(gestureModel);
+      }, undefined, function(error) {
+        console.warn("Model 1 not found. Add the .glb file to your assets folder.");
       });
 
-      /* module 2: weather monitoring — stacked translucent discs */
-      var discColors = [0x56d6c9, 0x56d6c9, 0x56d6c9];
-      for(var d=0; d<3; d++){
-        var discMat = new THREE.MeshStandardMaterial({ color:0x56d6c9, roughness:0.25, metalness:0.2, transparent:true, opacity:0.55 - d*0.1, emissive:0x56d6c9, emissiveIntensity:0.1 });
-        var disc = new THREE.Mesh(new THREE.CylinderGeometry(0.55 - d*0.08, 0.55 - d*0.08, 0.08, 24), discMat);
-        disc.position.set(0, -0.9 + d*0.28, 0);
-        group.add(disc);
-        weatherDiscs.push(disc);
-      }
+      // Module 2: Weather Monitoring
+      loader.load('assets/arduino_weather.glb', function(gltf) {
+        weatherModel = gltf.scene;
+        weatherModel.position.set(0, -0.6, 0);
+        group.add(weatherModel);
+      });
 
-      /* module 3: maze robot — grid floor + moving marker */
+      // Module 3: Maze Robot
+      // Adding a subtle grid helper underneath the robot
       var gridHelper = new THREE.GridHelper(1.6, 6, 0xb09bea, 0xb09bea);
       gridHelper.position.set(2.8, -0.95, 0);
       gridHelper.material.transparent = true;
       gridHelper.material.opacity = 0.5;
       group.add(gridHelper);
 
-      var markerMat = new THREE.MeshStandardMaterial({ color:0xb09bea, roughness:0.3, metalness:0.5, emissive:0xb09bea, emissiveIntensity:0.4 });
-      mazeMarker = new THREE.Mesh(new THREE.BoxGeometry(0.22,0.22,0.22), markerMat);
-      mazeMarker.position.set(2.8, -0.75, 0);
-      group.add(mazeMarker);
+      loader.load('assets/maze_robot.glb', function(gltf) {
+        mazeModel = gltf.scene;
+        mazeModel.position.set(2.8, -0.75, 0);
+        group.add(mazeModel);
+      });
 
-      /* click a third of the canvas to jump to that project's card */
+      /* Click a third of the canvas to jump to that project's card */
       canvas.addEventListener('click', function(e){
         var rect = canvas.getBoundingClientRect();
         var xFrac = (e.clientX - rect.left) / rect.width;
@@ -174,10 +183,19 @@ document.addEventListener('DOMContentLoaded', function(){
       });
     },
     onFrame: function(dt){
-      if(gestureCube){ gestureCube.rotation.x += dt*0.6; gestureCube.rotation.y += dt*0.4; }
-      weatherDiscs.forEach(function(disc, i){ disc.rotation.y += dt * (0.3 + i*0.15); });
-      if(mazeMarker){
+      // Animate the actual 3D models once they finish loading
+      if(gestureModel){ 
+        gestureModel.rotation.y += dt * 0.4; 
+        gestureModel.rotation.x = Math.sin(Date.now() * 0.001) * 0.1; // Subtle floating effect
+      }
+      
+      if(weatherModel){ 
+        weatherModel.rotation.y += dt * 0.3; 
+      }
+      
+      if(mazeModel){
         mazeT += dt;
+        // Keep the autonomous pathing logic for the new robot model
         var path = [[-0.5,-0.5],[0.5,-0.5],[0.5,0.1],[-0.1,0.1],[-0.1,0.5],[0.5,0.5]];
         var segT = (mazeT * 0.5) % path.length;
         var i0 = Math.floor(segT) % path.length;
@@ -185,7 +203,10 @@ document.addEventListener('DOMContentLoaded', function(){
         var f = segT - Math.floor(segT);
         var x = path[i0][0] + (path[i1][0]-path[i0][0]) * f;
         var z = path[i0][1] + (path[i1][1]-path[i0][1]) * f;
-        mazeMarker.position.set(2.8 + x, -0.75, z);
+        
+        // Point the robot in the direction it is moving
+        mazeModel.lookAt(2.8 + path[i1][0], -0.75, path[i1][1]);
+        mazeModel.position.set(2.8 + x, -0.75, z);
       }
     }
   });
