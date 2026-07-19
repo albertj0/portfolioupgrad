@@ -160,11 +160,14 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Add these two new loaders right here -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/RGBELoader.js"></script>
+<!-- Your common.js comes next -->
 <script src="common.js"></script>
 <script>
 (function(){
   "use strict";
-
   function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
   function mapRange(v,a,b,c,d){ if(a===b) return c; return clamp((v-a)/(b-a),0,1)*(d-c)+c; }
   function lerp(a,b,t){ return a + (b-a)*t; }
