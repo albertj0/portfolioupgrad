@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function(){
 /* ---- shared: lightweight reusable Three.js scene kit ----
    Handles: WebGL detection, renderer/camera/lights, drag-to-rotate,
    idle auto-rotate (paused if reduced-motion or dragging), resize, RAF loop.
-   Each page supplies its own geometry via opts.build(scene, group, THREE).
+   Now upgraded for HDRI environment maps and photorealistic rendering.
 ------------------------------------------------------------------- */
 window.Scene3DKit = {
   create: function(canvas, opts){
@@ -117,11 +117,15 @@ window.Scene3DKit = {
       var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias:true, alpha:true });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setSize(w, h);
+      
+      // Upgraded Tone Mapping for Photorealism
       if(THREE.ACESFilmicToneMapping){
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.15;
+        renderer.outputEncoding = THREE.sRGBEncoding; // Crucial for accurate GLTF colors
       }
 
+      // Basic Lighting Fallback (keeps your scene lit while HDRI loads)
       scene.add(new THREE.AmbientLight(0xffffff, 0.55));
       var key = new THREE.DirectionalLight(0xffffff, 0.9);
       key.position.set(4, 6, 5);
@@ -132,6 +136,15 @@ window.Scene3DKit = {
       var warm = new THREE.PointLight(0xeab454, 0.75, 25);
       warm.position.set(-3, 2, 4);
       scene.add(warm);
+
+      // --- NEW: HDRI Environment Map Loading ---
+      if(opts.envMapUrl && THREE.RGBELoader) {
+        new THREE.RGBELoader().load(opts.envMapUrl, function(texture) {
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+          scene.environment = texture;
+          // We intentionally do not set scene.background to keep the UI layer transparent
+        });
+      }
 
       var group = new THREE.Group();
       scene.add(group);
