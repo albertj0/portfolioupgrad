@@ -212,11 +212,23 @@
     renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias:true, alpha:true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(w, h);
+    
+    // Upgraded Tone Mapping for Photorealism
     if(THREE.ACESFilmicToneMapping){
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 1.2;
+      renderer.outputEncoding = THREE.sRGBEncoding;
     }
 
+    // Load Cinematic HDRI Environment Map
+    if(THREE.RGBELoader) {
+      new THREE.RGBELoader().load('assets/studio_lighting.hdr', function(texture) {
+        texture.mapping = THREE.EquirectangularReflectionMapping;
+        scene.environment = texture;
+      });
+    }
+
+    // Base Lighting (Serves as fallback before HDRI loads)
     scene.add(new THREE.AmbientLight(0xffffff, 0.55));
     var key = new THREE.DirectionalLight(0xffffff, 0.9);
     key.position.set(4, 6, 5);
@@ -231,37 +243,73 @@
     assembly = new THREE.Group();
     scene.add(assembly);
 
+    // Initial Geometric Fallback Materials
     var moldMat = new THREE.MeshStandardMaterial({ color:0x141414, roughness:0.85, metalness:0.15 });
     var dieMat = new THREE.MeshStandardMaterial({ color:0x3a4550, roughness:0.3, metalness:0.6, emissive:0xeab454, emissiveIntensity:0 });
     var subMat = new THREE.MeshStandardMaterial({ color:0xd8c9a3, roughness:0.55, metalness:0.05 });
     var baseMat = new THREE.MeshStandardMaterial({ color:0x0e3a2c, roughness:0.7, metalness:0.05 });
     var copperMat = new THREE.MeshStandardMaterial({ color:0xc08a28, roughness:0.3, metalness:0.85 });
 
+    // 1. Mold
     mold = new THREE.Mesh(new THREE.BoxGeometry(4.4, 1.2, 4.4), moldMat);
     mold.position.set(0, 0.6, 0);
     assembly.add(mold);
 
+    // 2. Die
     die = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.22, 1.6), dieMat);
     die.position.set(0, 0.05, 0);
-    assembly.add(die);
-
     var edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(new THREE.BoxGeometry(1.6, 0.22, 1.6)),
       new THREE.LineBasicMaterial({ color:0xeab454, transparent:true, opacity:0.5 })
     );
     edges.position.copy(die.position);
-    assembly.add(edges);
     die.userData.edges = edges;
+    die.add(edges); 
+    assembly.add(die);
 
+    // 3. Substrate
     substrate = new THREE.Mesh(new THREE.BoxGeometry(4, 0.35, 4), subMat);
     substrate.position.set(0, -0.55, 0);
     assembly.add(substrate);
 
+    // 4. Base
     base = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.3, 5.4), baseMat);
     base.position.set(0, -1.3, 0);
     assembly.add(base);
 
-    var wireGeo = new THREE.CylinderGeometry(0.025, 0.025, 1, 6);
+    // Async GLTF Loading: Replaces geometries instantly when loaded
+    if(THREE.GLTFLoader) {
+      var loader = new THREE.GLTFLoader();
+      
+      loader.load('assets/chip_mold.glb', function(gltf) {
+        assembly.remove(mold);
+        mold = gltf.scene;
+        assembly.add(mold);
+      }, undefined, function(e) { console.warn("Waiting for chip_mold.glb"); });
+
+      loader.load('assets/chip_die.glb', function(gltf) {
+        assembly.remove(die);
+        die = gltf.scene;
+        die.userData.edges = edges; // Reattach edge lines for the glowing effect
+        die.add(edges);
+        assembly.add(die);
+      }, undefined, function(e) { console.warn("Waiting for chip_die.glb"); });
+
+      loader.load('assets/chip_substrate.glb', function(gltf) {
+        assembly.remove(substrate);
+        substrate = gltf.scene;
+        assembly.add(substrate);
+      }, undefined, function(e) { console.warn("Waiting for chip_substrate.glb"); });
+
+      loader.load('assets/chip_base.glb', function(gltf) {
+        assembly.remove(base);
+        base = gltf.scene;
+        assembly.add(base);
+      }, undefined, function(e) { console.warn("Waiting for chip_base.glb"); });
+    }
+
+    // Dynamic High-Res Wires
+    var wireGeo = new THREE.CylinderGeometry(0.015, 0.015, 1, 12);
     for(var i=0;i<10;i++){
       var wMat = copperMat.clone();
       wMat.transparent = true;
@@ -279,6 +327,7 @@
       wires.push(wire);
     }
 
+    // Dynamic High-Res Pins
     var pinGeo = new THREE.BoxGeometry(0.55, 0.12, 0.16);
     var pinCount = 16;
     for(var j=0;j<pinCount;j++){
@@ -295,7 +344,7 @@
 
     assembly.rotation.x = -0.18;
 
-    // ambient copper dust drifting in the scene for atmosphere/depth
+    // Ambient Copper Dust
     var dustCount = 90;
     var positions = new Float32Array(dustCount * 3);
     for(var d=0; d<dustCount; d++){
@@ -316,16 +365,23 @@
     var s3 = mapRange(p, 0.56, 0.78, 0, 1);
     var s4 = mapRange(p, 0.78, 1.00, 0, 1);
 
-    mold.position.y = lerp(0.6, 2.7, s1);
+    if (mold) mold.position.y = lerp(0.6, 2.7, s1);
 
-    die.material.emissiveIntensity = 0.55 * s3;
-    die.userData.edges.material.opacity = 0.35 + 0.4*s3;
+    if (die) {
+      // Traverse the loaded model to control emissive intensity safely
+      die.traverse(function(child) {
+        if(child.isMesh && child.material) {
+          child.material.emissiveIntensity = 0.55 * s3;
+        }
+      });
+      if (die.userData.edges) die.userData.edges.material.opacity = 0.35 + 0.4*s3;
+    }
 
     var wireOpacity = clamp(s2 - s4, 0, 1);
     wires.forEach(function(w){ w.material.opacity = wireOpacity; });
 
-    substrate.position.y = lerp(-0.55, -1.85, s3);
-    base.position.y = lerp(-1.3, -3.0, s4);
+    if (substrate) substrate.position.y = lerp(-0.55, -1.85, s3);
+    if (base) base.position.y = lerp(-1.3, -3.0, s4);
 
     pins.forEach(function(pin){
       var extra = lerp(0, 1.15, s4);
