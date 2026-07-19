@@ -310,9 +310,30 @@ document.addEventListener('DOMContentLoaded', function(){
           bar.position.y = -1.0 + (next/2);
         }
       });
-    }
+// --- Calendar Interactivity ---
+  var calDays = document.querySelectorAll('.cal-day');
+  var logEntries = document.querySelectorAll('.log-entry');
+
+  calDays.forEach(function(day, index) {
+    day.addEventListener('click', function() {
+      var targetEntry = logEntries[index];
+      if (targetEntry) {
+        // Smooth scroll to the targeted log entry
+        targetEntry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Collapse all other entries
+        logEntries.forEach(function(entry) {
+          entry.classList.remove('open');
+          var btn = entry.querySelector('.log-btn');
+          if(btn) btn.setAttribute('aria-expanded', 'false');
+        });
+
+        // Expand the clicked day's entry
+        targetEntry.classList.add('open');
+        var targetBtn = targetEntry.querySelector('.log-btn');
+        if(targetBtn) targetBtn.setAttribute('aria-expanded', 'true');
+      }
+    });
   });
-});
-</script>
 </body>
 </html>
