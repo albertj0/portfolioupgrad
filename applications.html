@@ -136,41 +136,48 @@ document.addEventListener('DOMContentLoaded', function(){
       base.position.y = -1.1;
       group.add(base);
 
-      var loader = new THREE.GLTFLoader();
+var loader = new THREE.GLTFLoader();
+
+      // Helper function to scale, perfectly center, and wrap any imported model
+      function loadCenteredModel(url, scale, posX, posY, posZ, onLoad) {
+        loader.load(url, function(gltf) {
+          var model = gltf.scene;
+          model.scale.setScalar(scale);
+
+          // Center the raw geometry
+          var box = new THREE.Box3().setFromObject(model);
+          var center = box.getCenter(new THREE.Vector3());
+          model.position.set(-center.x, -center.y, -center.z);
+
+          // Wrap it in a group so your onFrame animations don't fight the centering math
+          var wrapper = new THREE.Group();
+          wrapper.add(model);
+          wrapper.position.set(posX, posY, posZ);
+          
+          group.add(wrapper);
+          onLoad(wrapper);
+        });
+      }
 
       // Module 1: Gesture Recognition
-      // Replace 'assets/esp8266_rpi4.glb' with the path to your downloaded model
-      loader.load('assets/esp8266_rpi4.glb', function(gltf) {
-        gestureModel = gltf.scene;
-        gestureModel.position.set(-2.8, -0.4, 0);
-        
-        // Scale the model down if it imports too large
-        // gestureModel.scale.setScalar(0.5); 
-        
-        group.add(gestureModel);
-      }, undefined, function(error) {
-        console.warn("Model 1 not found. Add the .glb file to your assets folder.");
+      loadCenteredModel('assets/esp8266_rpi4.glb', 0.1, -2.8, -0.4, 0, function(wrapper) {
+        gestureModel = wrapper;
       });
 
       // Module 2: Weather Monitoring
-      loader.load('assets/arduino_weather.glb', function(gltf) {
-        weatherModel = gltf.scene;
-        weatherModel.position.set(0, -0.6, 0);
-        group.add(weatherModel);
+      loadCenteredModel('assets/arduino_weather.glb', 0.1, 0, -0.6, 0, function(wrapper) {
+        weatherModel = wrapper;
       });
 
       // Module 3: Maze Robot
-      // Adding a subtle grid helper underneath the robot
       var gridHelper = new THREE.GridHelper(1.6, 6, 0xb09bea, 0xb09bea);
       gridHelper.position.set(2.8, -0.95, 0);
       gridHelper.material.transparent = true;
       gridHelper.material.opacity = 0.5;
       group.add(gridHelper);
 
-      loader.load('assets/maze_robot.glb', function(gltf) {
-        mazeModel = gltf.scene;
-        mazeModel.position.set(2.8, -0.75, 0);
-        group.add(mazeModel);
+      loadCenteredModel('assets/maze_robot.glb', 0.1, 2.8, -0.75, 0, function(wrapper) {
+        mazeModel = wrapper;
       });
 
       /* Click a third of the canvas to jump to that project's card */
