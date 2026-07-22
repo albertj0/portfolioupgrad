@@ -138,18 +138,25 @@ document.addEventListener('DOMContentLoaded', function(){
 
 var loader = new THREE.GLTFLoader();
 
-      // Helper function to scale, perfectly center, and wrap any imported model
+      // Helper function with fixed bounding-box math
       function loadCenteredModel(url, scale, posX, posY, posZ, onLoad) {
         loader.load(url, function(gltf) {
           var model = gltf.scene;
+          
+          // Apply the new, much smaller scale first
           model.scale.setScalar(scale);
 
-          // Center the raw geometry
-          var box = new THREE.Box3().setFromObject(model);
-          var center = box.getCenter(new THREE.Vector3());
-          model.position.set(-center.x, -center.y, -center.z);
+          // CRITICAL: Force Three.js to calculate the new dimensions before centering
+          model.updateMatrixWorld(true);
 
-          // Wrap it in a group so your onFrame animations don't fight the centering math
+          // Calculate the exact center of the scaled model
+          var box = new THREE.Box3().setFromObject(model);
+          var center = new THREE.Vector3();
+          box.getCenter(center);
+
+          // Subtract the center coordinates to snap it perfectly to 0,0,0 locally
+          model.position.sub(center);
+
           var wrapper = new THREE.Group();
           wrapper.add(model);
           wrapper.position.set(posX, posY, posZ);
@@ -159,13 +166,16 @@ var loader = new THREE.GLTFLoader();
         });
       }
 
+      // PCB exports need aggressive scaling. We use 0.005 instead of 0.1.
+      // If they are still a bit large, try 0.002. If too small, try 0.01.
+      
       // Module 1: Gesture Recognition
-      loadCenteredModel('assets/esp8266_rpi4.glb', 0.1, -2.8, -0.4, 0, function(wrapper) {
+      loadCenteredModel('assets/esp8266_rpi4.glb', 0.005, -2.8, -0.4, 0, function(wrapper) {
         gestureModel = wrapper;
       });
 
       // Module 2: Weather Monitoring
-      loadCenteredModel('assets/arduino_weather.glb', 0.1, 0, -0.6, 0, function(wrapper) {
+      loadCenteredModel('assets/arduino_weather.glb', 0.005, 0, -0.6, 0, function(wrapper) {
         weatherModel = wrapper;
       });
 
@@ -176,10 +186,9 @@ var loader = new THREE.GLTFLoader();
       gridHelper.material.opacity = 0.5;
       group.add(gridHelper);
 
-      loadCenteredModel('assets/maze_robot.glb', 0.1, 2.8, -0.75, 0, function(wrapper) {
+      loadCenteredModel('assets/maze_robot.glb', 0.005, 2.8, -0.75, 0, function(wrapper) {
         mazeModel = wrapper;
       });
-
       /* Click a third of the canvas to jump to that project's card */
       canvas.addEventListener('click', function(e){
         var rect = canvas.getBoundingClientRect();
