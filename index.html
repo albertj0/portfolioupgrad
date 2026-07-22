@@ -297,7 +297,9 @@ function createPremiumProceduralChip() {
     assembly = new THREE.Group();
     scene.add(assembly);
 
-    // --- PASTE THIS NEW BLOCK HERE ---
+// --- RE-ADD THE MISSING COPPER MATERIAL HERE ---
+    var copperMat = new THREE.MeshStandardMaterial({ color:0xc08a28, roughness:0.3, metalness:0.85 });
+    
     var premiumChip = createPremiumProceduralChip();
     assembly.add(premiumChip);
 
