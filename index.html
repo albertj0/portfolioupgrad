@@ -179,7 +179,59 @@
   var stagePanels = document.querySelectorAll('.hero3d-stage');
   var railButtons = document.querySelectorAll('.rail button');
   var prefersReduced = window.prefersReducedMotion;
+function createPremiumProceduralChip() {
+    var chipGroup = new THREE.Group();
 
+    // 1. Base Layer (Fiberglass Anchor)
+    var baseGeo = new THREE.BoxGeometry(5.4, 0.3, 5.4);
+    var baseMat = new THREE.MeshStandardMaterial({ color: 0x0e3a2c, roughness: 0.7, metalness: 0.2 });
+    var baseMesh = new THREE.Mesh(baseGeo, baseMat);
+    baseMesh.name = "chip_base";
+    baseMesh.position.set(0, -1.3, 0); 
+    chipGroup.add(baseMesh);
+
+    // 2. Substrate (PCB with Gold Traces)
+    var subGeo = new THREE.BoxGeometry(4, 0.35, 4);
+    var subMat = new THREE.MeshStandardMaterial({ color: 0x052c11, roughness: 0.6, metalness: 0.1 });
+    var substrateMesh = new THREE.Mesh(subGeo, subMat);
+    substrateMesh.name = "chip_substrate";
+    substrateMesh.position.set(0, -0.55, 0); 
+    
+    // Procedural Gold Traces for the substrate
+    var traceGeo = new THREE.EdgesGeometry(new THREE.BoxGeometry(3.9, 0.36, 3.9));
+    var traceMat = new THREE.LineBasicMaterial({ color: 0xd4af37, linewidth: 2, transparent: true, opacity: 0.6 });
+    var traces = new THREE.LineSegments(traceGeo, traceMat);
+    substrateMesh.add(traces);
+    chipGroup.add(substrateMesh);
+
+    // 3. Silicon Die (Polished Wafer Core)
+    var dieGeo = new THREE.BoxGeometry(1.6, 0.22, 1.6);
+    var dieMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0a0a0a, metalness: 1.0, roughness: 0.05, clearcoat: 1.0, clearcoatRoughness: 0.02
+    });
+    var dieMesh = new THREE.Mesh(dieGeo, dieMat);
+    dieMesh.name = "chip_die";
+    dieMesh.position.set(0, 0.05, 0); 
+    chipGroup.add(dieMesh);
+
+    // 4. Mold Casing (Brushed Heat Spreader)
+    var moldGeo = new THREE.BoxGeometry(4.4, 1.2, 4.4);
+    var moldMat = new THREE.MeshStandardMaterial({ color: 0x141414, metalness: 0.3, roughness: 0.7 });
+    var moldMesh = new THREE.Mesh(moldGeo, moldMat);
+    moldMesh.name = "chip_mold";
+    moldMesh.position.set(0, 0.6, 0); 
+    
+    // Etched branding plate
+    var etchGeo = new THREE.PlaneGeometry(2, 2);
+    var etchMat = new THREE.MeshStandardMaterial({ color: 0x0d0d0d, metalness: 0.5, roughness: 0.8 });
+    var etch = new THREE.Mesh(etchGeo, etchMat);
+    etch.rotation.x = -Math.PI / 2;
+    etch.position.y = 0.601; // Slightly above the mold to prevent Z-fighting
+    moldMesh.add(etch);
+    
+    chipGroup.add(moldMesh);
+    return chipGroup;
+  }
   var hasThree = (typeof THREE !== 'undefined');
   var webglOK = false;
   if(hasThree){
@@ -242,72 +294,6 @@
 
     assembly = new THREE.Group();
     scene.add(assembly);
-
-    // Initial Geometric Fallback Materials
-    var moldMat = new THREE.MeshStandardMaterial({ color:0x141414, roughness:0.85, metalness:0.15 });
-    var dieMat = new THREE.MeshStandardMaterial({ color:0x3a4550, roughness:0.3, metalness:0.6, emissive:0xeab454, emissiveIntensity:0 });
-    var subMat = new THREE.MeshStandardMaterial({ color:0xd8c9a3, roughness:0.55, metalness:0.05 });
-    var baseMat = new THREE.MeshStandardMaterial({ color:0x0e3a2c, roughness:0.7, metalness:0.05 });
-    var copperMat = new THREE.MeshStandardMaterial({ color:0xc08a28, roughness:0.3, metalness:0.85 });
-
-    // 1. Mold
-    mold = new THREE.Mesh(new THREE.BoxGeometry(4.4, 1.2, 4.4), moldMat);
-    mold.position.set(0, 0.6, 0);
-    assembly.add(mold);
-
-    // 2. Die
-    die = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.22, 1.6), dieMat);
-    die.position.set(0, 0.05, 0);
-    var edges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(new THREE.BoxGeometry(1.6, 0.22, 1.6)),
-      new THREE.LineBasicMaterial({ color:0xeab454, transparent:true, opacity:0.5 })
-    );
-    edges.position.copy(die.position);
-    die.userData.edges = edges;
-    die.add(edges); 
-    assembly.add(die);
-
-    // 3. Substrate
-    substrate = new THREE.Mesh(new THREE.BoxGeometry(4, 0.35, 4), subMat);
-    substrate.position.set(0, -0.55, 0);
-    assembly.add(substrate);
-
-    // 4. Base
-    base = new THREE.Mesh(new THREE.BoxGeometry(5.4, 0.3, 5.4), baseMat);
-    base.position.set(0, -1.3, 0);
-    assembly.add(base);
-
-    // Async GLTF Loading: Replaces geometries instantly when loaded
-    if(THREE.GLTFLoader) {
-      var loader = new THREE.GLTFLoader();
-      
-      loader.load('assets/chip_mold.glb', function(gltf) {
-        assembly.remove(mold);
-        mold = gltf.scene;
-        assembly.add(mold);
-      }, undefined, function(e) { console.warn("Waiting for chip_mold.glb"); });
-
-      loader.load('assets/chip_die.glb', function(gltf) {
-        assembly.remove(die);
-        die = gltf.scene;
-        die.userData.edges = edges; // Reattach edge lines for the glowing effect
-        die.add(edges);
-        assembly.add(die);
-      }, undefined, function(e) { console.warn("Waiting for chip_die.glb"); });
-
-      loader.load('assets/chip_substrate.glb', function(gltf) {
-        assembly.remove(substrate);
-        substrate = gltf.scene;
-        assembly.add(substrate);
-      }, undefined, function(e) { console.warn("Waiting for chip_substrate.glb"); });
-
-      loader.load('assets/chip_base.glb', function(gltf) {
-        assembly.remove(base);
-        base = gltf.scene;
-        assembly.add(base);
-      }, undefined, function(e) { console.warn("Waiting for chip_base.glb"); });
-    }
-
     // Dynamic High-Res Wires
     var wireGeo = new THREE.CylinderGeometry(0.015, 0.015, 1, 12);
     for(var i=0;i<10;i++){
