@@ -294,6 +294,29 @@ function createPremiumProceduralChip() {
 
     assembly = new THREE.Group();
     scene.add(assembly);
+    assembly = new THREE.Group();
+    scene.add(assembly);
+
+    // --- PASTE THIS NEW BLOCK HERE ---
+    var premiumChip = createPremiumProceduralChip();
+    assembly.add(premiumChip);
+
+    mold = premiumChip.getObjectByName("chip_mold");
+    die = premiumChip.getObjectByName("chip_die");
+    substrate = premiumChip.getObjectByName("chip_substrate");
+    base = premiumChip.getObjectByName("chip_base");
+
+    var edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(1.6, 0.22, 1.6)),
+      new THREE.LineBasicMaterial({ color:0xeab454, transparent:true, opacity:0.5 })
+    );
+    edges.position.copy(die.position);
+    die.userData.edges = edges;
+    die.add(edges);
+    // ---------------------------------
+
+    // Dynamic High-Res Wires
+    var wireGeo = new THREE.CylinderGeometry(0.015, 0.015, 1, 12);
     // Dynamic High-Res Wires
     var wireGeo = new THREE.CylinderGeometry(0.015, 0.015, 1, 12);
     for(var i=0;i<10;i++){
